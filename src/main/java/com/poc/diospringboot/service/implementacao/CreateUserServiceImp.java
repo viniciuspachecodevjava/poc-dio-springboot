@@ -47,8 +47,5 @@ public class CreateUserServiceImp implements CreateUserService {
         }
     }
 
-    private void checkIfPasswordExists(String password) {
-
-    }
 
 }

@@ -2,6 +2,7 @@ package com.poc.diospringboot.config.handling;
 
 import com.poc.diospringboot.service.exception.CreateUserServiceException;
 import com.poc.diospringboot.service.exception.ExistsByEmailServiceException;
+import com.poc.diospringboot.service.exception.ExistsByLoginServiceException;
 import com.poc.diospringboot.service.exception.ServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,13 @@ public class ExceptionHandlingController {
             String errormessage = exception.getMessage();
             GenericErrorResponse genericErrorResponse = new GenericErrorResponse(code, error, errormessage);
             return ResponseEntity.status(code).body(genericErrorResponse);
-        }
-        if (exception instanceof ExistsByEmailServiceException) {
+        }else if (exception instanceof ExistsByEmailServiceException) {
+            int code = HttpStatus.CONFLICT.value();
+            String error = HttpStatus.CONFLICT.getReasonPhrase();
+            String errormessage = exception.getMessage();
+            GenericErrorResponse genericErrorResponse = new GenericErrorResponse(code, error, errormessage);
+            return ResponseEntity.status(code).body(genericErrorResponse);
+        }else if (exception instanceof ExistsByLoginServiceException) {
             int code = HttpStatus.CONFLICT.value();
             String error = HttpStatus.CONFLICT.getReasonPhrase();
             String errormessage = exception.getMessage();

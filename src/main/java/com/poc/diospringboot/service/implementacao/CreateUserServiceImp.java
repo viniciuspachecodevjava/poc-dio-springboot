@@ -5,8 +5,10 @@ import com.poc.diospringboot.gateway.CreateUserGateway;
 import com.poc.diospringboot.gateway.exception.CreateUserGatewayException;
 import com.poc.diospringboot.service.CreateUserService;
 import com.poc.diospringboot.service.ExistsByEmailService;
+import com.poc.diospringboot.service.ExistsByLoginService;
 import com.poc.diospringboot.service.exception.CreateUserServiceException;
 import com.poc.diospringboot.service.exception.ExistsByEmailServiceException;
+import com.poc.diospringboot.service.exception.ExistsByLoginServiceException;
 import com.poc.diospringboot.service.exception.ServiceException;
 import org.springframework.stereotype.Service;
 
@@ -14,16 +16,19 @@ import org.springframework.stereotype.Service;
 public class CreateUserServiceImp implements CreateUserService {
     private final CreateUserGateway createUserGateway;
     private final ExistsByEmailService existsByEmailService;
+    private final ExistsByLoginService existsByLoginService;
 
-    public CreateUserServiceImp(CreateUserGateway createUserGateway, ExistsByEmailService existsByEmailService) {
+    public CreateUserServiceImp(CreateUserGateway createUserGateway, ExistsByEmailService existsByEmailService, ExistsByLoginService existsByLoginService) {
         this.createUserGateway = createUserGateway;
         this.existsByEmailService = existsByEmailService;
+        this.existsByLoginService = existsByLoginService;
     }
 
     @Override
     public void execute(User user) throws ServiceException {
-        checkIfEmailExists(user.getEmail());
         try {
+            checkIfEmailExists(user.getEmail());
+            checkIfLoginExists(user.getLogin());
             createUserGateway.execute(user);
         } catch (CreateUserGatewayException e) {
             throw new CreateUserServiceException("Erro ao cadastrar usuario");
@@ -36,8 +41,10 @@ public class CreateUserServiceImp implements CreateUserService {
         }
     }
 
-    private void checkIfLoginExists(String login) {
-
+    private void checkIfLoginExists(final String login) throws ServiceException {
+        if (existsByLoginService.execute(login)) {
+            throw new ExistsByLoginServiceException("O login " + login + " já existe");
+        }
     }
 
     private void checkIfPasswordExists(String password) {

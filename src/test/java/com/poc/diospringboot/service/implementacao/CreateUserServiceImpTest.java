@@ -7,6 +7,7 @@ import com.poc.diospringboot.gateway.exception.CreateUserGatewayException;
 import com.poc.diospringboot.service.ExistsByEmailService;
 import com.poc.diospringboot.service.ExistsByLoginService;
 import com.poc.diospringboot.service.exception.ExistsByEmailServiceException;
+import com.poc.diospringboot.service.exception.ExistsByLoginServiceException;
 import com.poc.diospringboot.service.exception.ServiceException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -52,5 +53,14 @@ public class CreateUserServiceImpTest {
         verify(existsByEmailService, times(1)).execute(any());
         verifyNoInteractions(createUserGateway);
 
+    }
+
+    @Test
+    @DisplayName("Deve verificar se Login já existe")
+    public void checkIfLoginExists() throws ServiceException {
+        User validUser = UserBuilder.anUser().build();
+        when(existsByLoginService.execute(validUser.getLogin())).thenReturn(true);
+        Throwable exception = Assertions.assertThrows(ExistsByLoginServiceException.class, () -> createUserServiceImp.execute(validUser));
+        Assertions.assertTrue(exception.getMessage().contains("O login " + validUser.getLogin() + " já existe"));
     }
 }

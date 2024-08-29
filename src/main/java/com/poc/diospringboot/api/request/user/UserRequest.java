@@ -16,8 +16,16 @@ public class UserRequest {
     @NotBlank
     private String password;
 
-    public User toDomain(){
+    public User toDomain() {
         return new User(name, email, login, password);
+    }
+
+    public User toDomainLogin() {
+        return new User(email, password);
+    }
+
+    public User loginDTO(UserRequest userRequest) {
+        return new User(userRequest.getEmail(), userRequest.getPassword());
     }
 
     public String getName() {

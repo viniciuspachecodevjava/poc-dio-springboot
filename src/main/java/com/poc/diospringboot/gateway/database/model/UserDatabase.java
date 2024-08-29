@@ -3,6 +3,9 @@ package com.poc.diospringboot.gateway.database.model;
 import com.poc.diospringboot.domain.user.User;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 public class UserDatabase {
     @Id
@@ -16,6 +19,10 @@ public class UserDatabase {
     private String login;
     @Column(name = "password", nullable = false, unique = true)
     private String password;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "tab_user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role_id")
+    private List<String> roles = new ArrayList<>();
 
     public UserDatabase(User user) {
         this.id = user.getId();
@@ -25,6 +32,12 @@ public class UserDatabase {
         this.password = user.getPassword();
     }
 
+    public UserDatabase() {
+    }
+
+    public User toUser() {
+        return new User(id, name, email, login, password);
+    }
     public Long getId() {
         return id;
     }
@@ -43,5 +56,9 @@ public class UserDatabase {
 
     public String getPassword() {
         return password;
+    }
+
+    public List<String> getRoles() {
+        return roles;
     }
 }

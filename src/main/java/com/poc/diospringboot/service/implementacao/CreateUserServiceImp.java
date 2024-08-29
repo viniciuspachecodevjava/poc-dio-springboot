@@ -25,11 +25,12 @@ public class CreateUserServiceImp implements CreateUserService {
     }
 
     @Override
-    public void execute(User user) throws ServiceException {
+    public User execute(User user) throws ServiceException {
         try {
             checkIfEmailExists(user.getEmail());
             checkIfLoginExists(user.getLogin());
-            createUserGateway.execute(user);
+            return createUserGateway.execute(user);
+
         } catch (CreateUserGatewayException e) {
             throw new CreateUserServiceException("Erro ao cadastrar usuario");
         }

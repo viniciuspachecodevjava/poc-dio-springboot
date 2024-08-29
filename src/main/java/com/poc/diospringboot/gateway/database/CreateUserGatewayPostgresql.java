@@ -16,9 +16,10 @@ public class CreateUserGatewayPostgresql implements CreateUserGateway {
     }
 
     @Override
-    public void execute(User user) throws CreateUserGatewayException {
+    public User execute(User user) throws CreateUserGatewayException {
         try {
-            userRepository.save(new UserDatabase(user));
+           UserDatabase userDatabase = userRepository.save(new UserDatabase(user));
+            return userDatabase.toUser();
         }catch (Exception e){
             throw new CreateUserGatewayException("Erro ao salvar um novo usuário", e);
         }
